@@ -9,8 +9,9 @@ const jobSchema = new Schema({
     type: String,
     required: true,
   },
-  userId: {
+  userEmail: {
     type: String,
+    lowercase: true,
     required: true,
   },
   jobCategory: {
