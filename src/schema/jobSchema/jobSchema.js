@@ -19,9 +19,8 @@ const jobSchema = new Schema({
     required: true,
   },
   jobCategory: {
-    type: String,
-    required: true,
-    enum: ["on-site", "hybrid", "remote", "part-time"],
+    type: Schema.Types.ObjectId,
+    ref: "Category",
   },
   salaryRangeTo: {
     type: Number,

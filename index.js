@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import jobRouter from "./src/routes/jobRoutes.js";
 import authRoute from "./src/routes/authRoute.js";
 import appliedJobRouter from "./src/routes/appliedJobrouter.js";
+import categoryRouter from "./src/routes/categoryRouter.js";
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 app.use("/jwt", authRoute);
 app.use("/jobs", jobRouter);
 app.use("/appliedjobs", appliedJobRouter);
+app.use("/categories", categoryRouter);
 
 app.listen(port, () => {
   console.log(`server running on port :${port}`);
