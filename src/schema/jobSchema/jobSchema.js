@@ -14,6 +14,10 @@ const jobSchema = new Schema({
     lowercase: true,
     required: true,
   },
+  jobTitle: {
+    type: String,
+    required: true,
+  },
   jobCategory: {
     type: String,
     required: true,
