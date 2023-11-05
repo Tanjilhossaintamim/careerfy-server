@@ -23,15 +23,19 @@ jobRouter.get("/", async (req, res) => {
   const page = req.query?.page || 1;
   const limit = req.query?.limit || 10;
   const skip = (page - 1) * limit;
-
+  const matched = {};
   if (jobCategory) {
-    query.jobCategory = jobCategory;
+    matched.title = jobCategory;
   }
   if (jobTitle) {
     query.jobTitle = { $regex: jobTitle, $options: "i" };
   }
-  const results = await Job.find(query).skip(skip).limit(limit);
-  res.send(results);
+  const results = await Job.find(query)
+    .populate({ path: "jobCategory", match: matched })
+    .skip(skip)
+    .limit(limit);
+  const finalResults = results?.filter((result) => result.jobCategory);
+  res.send(finalResults);
 });
 
 jobRouter.get("/:id", verifyToken, async (req, res) => {

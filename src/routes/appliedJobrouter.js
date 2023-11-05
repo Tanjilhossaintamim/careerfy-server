@@ -54,16 +54,19 @@ appliedJobRouter.get("/", verifyToken, async (req, res) => {
   };
   const matchField = {};
   if (req.query?.category) {
-    matchField.jobCategory = req.query.category;
+    matchField.title = req.query.category;
   }
 
   try {
     const results = await AppliedJob.find(query).populate({
       path: "job",
       select: "photoUrl jobTitle jobCategory salaryRangeTo salaryRangeFrom",
-      match: matchField,
+      populate: {
+        path: "jobCategory",
+        match: matchField,
+      },
     });
-    const finelResults = results?.filter((result) => result.job);
+    const finelResults = results?.filter((result) => result.job.jobCategory);
     res.send(finelResults);
   } catch (error) {
     res.send({ message: error?.message });

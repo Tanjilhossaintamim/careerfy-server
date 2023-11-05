@@ -49,15 +49,7 @@ const jobSchema = new Schema({
     default: 0,
   },
 });
-// jobSchema.pre("save", (next) => {
-//   if (!this.jobPostingDate) {
-//     this.jobPostingDate = new Date();
-//   }
-//   if (!this.jobApplicantsNumber) {
-//     this.jobApplicantsNumber = 0;
-//   }
-//   next();
-// });
+
 
 const Job = model("Job", jobSchema);
 export default Job;
