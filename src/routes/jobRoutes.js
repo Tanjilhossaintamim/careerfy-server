@@ -10,7 +10,6 @@ jobRouter.post("/", verifyToken, async (req, res) => {
   const newJob = new Job(data);
   try {
     const result = await newJob.save();
-
     res.send(result);
   } catch (error) {
     res.send({ message: error.message });
@@ -19,16 +18,19 @@ jobRouter.post("/", verifyToken, async (req, res) => {
 
 jobRouter.get("/", async (req, res) => {
   const query = {};
-
   const jobCategory = req.query?.category;
   const jobTitle = req.query?.title;
+  const page = req.query?.page || 1;
+  const limit = req.query?.limit || 10;
+  const skip = (page - 1) * limit;
+
   if (jobCategory) {
     query.jobCategory = jobCategory;
   }
   if (jobTitle) {
     query.jobTitle = { $regex: jobTitle, $options: "i" };
   }
-  const results = await Job.find(query);
+  const results = await Job.find(query).skip(skip).limit(limit);
   res.send(results);
 });
 
@@ -46,11 +48,14 @@ jobRouter.get("/:id", verifyToken, async (req, res) => {
 });
 
 jobRouter.get("/myjobs/me", verifyToken, async (req, res) => {
+  const page = req.query?.page || 1;
+  const limit = req.query?.limit || 10;
+  const skip = (page - 1) * limit;
   const query = {
     userEmail: req.user,
   };
   try {
-    const results = await Job.find(query);
+    const results = await Job.find(query).skip(skip).limit(limit);
     res.status(200).send(results);
   } catch (error) {
     res.send({ message: error.message });
