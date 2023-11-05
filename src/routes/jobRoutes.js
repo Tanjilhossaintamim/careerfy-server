@@ -45,6 +45,18 @@ jobRouter.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
+jobRouter.get("/myjobs/me", verifyToken, async (req, res) => {
+  const query = {
+    userEmail: req.user,
+  };
+  try {
+    const results = await Job.find(query);
+    res.status(200).send(results);
+  } catch (error) {
+    res.send({ message: error.message });
+  }
+});
+
 jobRouter.put("/:id", verifyToken, async (req, res) => {
   const _id = req.params?.id;
   try {
