@@ -11,14 +11,18 @@ appliedJobRouter.post("/", verifyToken, async (req, res) => {
   data.applicantEmail = email;
 
   try {
-    const isMyJob = await Job.findOne({
+    const currentJob = await Job.findOne({
       _id: req.body.job,
-      userEmail: email,
     });
-    if (isMyJob?._id) {
+    console.log(currentJob);
+
+    if (currentJob?.userEmail === email) {
       return res
         .status(403)
         .send({ message: "can not apply for your own job" });
+    }
+    if (new Date(currentJob?.applicationDeadline) <= new Date()) {
+      return res.status(403).send({ message: "Job Already deadline !" });
     }
     const isAllreadyApplied = await AppliedJob.findOne({
       applicantEmail: email,
