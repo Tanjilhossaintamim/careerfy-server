@@ -14,7 +14,6 @@ appliedJobRouter.post("/", verifyToken, async (req, res) => {
     const currentJob = await Job.findOne({
       _id: req.body.job,
     });
-    console.log(currentJob);
 
     if (currentJob?.userEmail === email) {
       return res
@@ -60,14 +59,9 @@ appliedJobRouter.get("/", verifyToken, async (req, res) => {
   try {
     const results = await AppliedJob.find(query).populate({
       path: "job",
-      select: "photoUrl jobTitle jobCategory salaryRangeTo salaryRangeFrom",
-      populate: {
-        path: "jobCategory",
-        match: matchField,
-      },
     });
-    const finelResults = results?.filter((result) => result.job.jobCategory);
-    res.send(finelResults);
+
+    res.send(results);
   } catch (error) {
     res.send({ message: error?.message });
   }

@@ -44,7 +44,7 @@ jobRouter.get("/:id", verifyToken, async (req, res) => {
     _id,
   };
   try {
-    const result = await Job.findOne(filter);
+    const result = await Job.findOne(filter).populate({ path: "jobCategory" });
     res.send(result);
   } catch (error) {
     res.send({ message: error.message });
@@ -55,12 +55,23 @@ jobRouter.get("/myjobs/me", verifyToken, async (req, res) => {
   const page = req.query?.page || 1;
   const limit = req.query?.limit || 10;
   const skip = (page - 1) * limit;
+  const category = req.query?.category;
   const query = {
     userEmail: req.user,
   };
+  const matchQuery = {};
+  if (category) {
+    matchQuery.title = category;
+  }
   try {
-    const results = await Job.find(query).skip(skip).limit(limit);
-    res.status(200).send(results);
+    const results = await Job.find(query)
+      .populate({ path: "jobCategory", match: matchQuery })
+      .skip(skip)
+      .limit(limit);
+    const finalResults = results?.filter((result) => result.jobCategory);
+    console.log(finalResults);
+    res.send(finalResults);
+    // res.send(results);
   } catch (error) {
     res.send({ message: error.message });
   }
@@ -81,7 +92,7 @@ jobRouter.put("/:id", verifyToken, async (req, res) => {
 jobRouter.delete("/:id", verifyToken, async (req, res) => {
   const _id = req.params?.id;
   try {
-    const filter = { _id };
+    const filter = { _id, userEmail: req.user };
 
     const result = await Job.deleteOne(filter);
     res.send(result);

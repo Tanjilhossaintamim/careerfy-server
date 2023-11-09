@@ -1,13 +1,15 @@
 import jwt from "jsonwebtoken";
 import { Router } from "express";
+import { verifyToken } from "../middlewares/verifyToken.js";
 const authRoute = Router();
 
 authRoute.post("/", (req, res) => {
   const userData = {
-    email: req.body?.user?.email,
+    email: req.body?.email,
   };
+
   const token = jwt.sign({ userData }, process.env.TOKEN_SECRET_KEY, {
-    expiresIn: "2h",
+    expiresIn: "24h",
   });
   res
     .cookie("token", token, { httpOnly: true, sameSite: "none", secure: true })
@@ -16,5 +18,8 @@ authRoute.post("/", (req, res) => {
 
 authRoute.post("/logout", (req, res) => {
   res.clearCookie("token", { maxAge: 0 }).send({ success: true });
+});
+authRoute.post("/checklogin", verifyToken, (req, res) => {
+  res.send({ loggedIn: true });
 });
 export default authRoute;
