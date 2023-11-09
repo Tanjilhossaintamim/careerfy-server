@@ -12,7 +12,11 @@ authRoute.post("/", (req, res) => {
     expiresIn: "24h",
   });
   res
-    .cookie("token", token, { httpOnly: true, sameSite: "none", secure: true })
+    .cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    })
     .send({ success: true });
 });
 
